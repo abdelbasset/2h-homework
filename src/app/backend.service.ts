@@ -27,10 +27,16 @@ export class BackendService {
             completed: false,
             assigneeId: 111,
             description: 'Move the desk to the new location'
+        },
+        {
+            id: 2,
+            completed: true,
+            assigneeId: 111,
+            description: 'Test Move the desk to the new location'
         }
     ];
 
-    public storedUsers: User[] = [{ id: 111, name: 'Victor' }];
+    public storedUsers: User[] = [{ id: 111, name: 'Victor' }, { id: 123, name: 'Hugo' }, { id: 154, name: 'Max' }];
 
     private lastId: number = 1;
 
@@ -53,11 +59,11 @@ export class BackendService {
         return of(this.findUserById(id)).pipe(delay(randomDelay()));
     }
 
-    public newTicket(payload: { description: string }): Observable<Ticket> {
+    public newTicket(payload: { description: string, user: any, lastId: number }): Observable<Ticket> {
         const newTicket: Ticket = {
-            id: ++this.lastId,
+            id: payload.lastId,
             completed: false,
-            assigneeId: null,
+            assigneeId: payload.user,
             description: payload.description
         };
 

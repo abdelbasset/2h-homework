@@ -1,0 +1,97 @@
+<h1>Tickets</h1>
+<button mat-raised-button color="primary" class="mt-40" (click)="showAdd = !showAdd" matTooltip="Ajouter Ticket">
+    Ajouter Ticket <i class="material-icons">add_circle_outline</i>
+</button>
+<br><br>
+<mat-card *ngIf="listUser && showAdd">
+    <form [formGroup]="ticketForm" class="form">
+        <mat-form-field class="mat-form-field-fluid">
+            <input matInput placeholder="Description" formControlName="description">
+            <mat-error>
+                Description
+                <strong>obligatoire</strong>
+            </mat-error>
+            <mat-hint align="start">Veuillez remplir la
+                <strong>Description</strong>
+            </mat-hint>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Utilisateur</mat-label>
+            <mat-select formControlName="user">
+                <mat-option *ngFor="let user of listUser" [value]="user.id">{{ user.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" class="ml-3" (click)="addTicket()"
+            [disabled]="loading || ticketForm.invalid">Enregistrer</button>
+    </form>
+</mat-card>
+
+<mat-card>
+
+    <mat-card-header>
+        <mat-card-title>Liste des tickets (Drag & Drop to change status)</mat-card-title>
+    </mat-card-header>
+    <mat-spinner *ngIf="loading"></mat-spinner>
+    <br>
+    <mat-card-content>
+        <div class="col-md-4" *ngIf="listUser">
+            <mat-form-field>
+                <mat-label>Filtrer par Utilisateur </mat-label>
+                <mat-select (selectionChange)="changeUser($event.value)">
+                    <mat-option *ngFor="let user of listUser" [value]="user.id"> {{ user.name }} </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div cdkDropListGroup *ngIf="!loading">
+            <div class="example-container">
+                <h2>To do</h2>
+                <div cdkDropList [cdkDropListData]="ticketsProgress" class="example-list"
+                    (cdkDropListDropped)="drop($event)">
+                    <div class="example-box" *ngFor="let ticket of ticketsProgress" cdkDrag>
+                        <div *ngIf='!ticket.completed'>
+                            Ticket: {{ ticket.id }}, {{ticket.description}}
+                            <button mat-icon-button matTooltip="Détails">
+                                <i class="material-icons" (click)="detailsTicket(ticket.id)">info</i>
+                            </button>
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>Assign To</mat-label>
+                                    <mat-select [(value)]="ticket.assigneeId"
+                                        (selectionChange)="updateTicket(ticket.id, $event.value)">
+                                        <mat-option *ngFor="let user of listUser" [value]="user.id">{{ user.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-container">
+                <h2>Done</h2>
+                <div cdkDropList [cdkDropListData]="ticketsDone" class="example-list"
+                    (cdkDropListDropped)="drop($event)">
+                    <div class="example-box" *ngFor="let ticket of ticketsDone" cdkDrag>
+                        <div *ngIf='ticket.completed'>
+                            Ticket: {{ ticket.id }}, {{ticket.description}}
+                            <button mat-icon-button matTooltip="Détails" routerLink="/ticket-details">
+                                <i class="material-icons" (click)="detailsTicket(ticket.id)">info</i>
+                            </button>
+                            <mat-form-field>
+                                <mat-label>Assign To</mat-label>
+                                <mat-select [(value)]="ticket.assigneeId"
+                                    (selectionChange)="updateTicket(ticket.id, $event.value)">
+                                    <mat-option *ngFor="let user of listUser" [value]="user.id">{{ user.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

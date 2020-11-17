@@ -1,0 +1,12 @@
+<mat-card>
+    <mat-spinner *ngIf="loading"></mat-spinner>
+    <div *ngIf="ticket && user">
+        <h2> Ticket N° {{ ticket.id }}</h2>
+        <h1> Description : {{ ticket.description }}</h1>
+        <h3 *ngIf="user"> Pour : {{ user.name }}</h3>
+    </div>
+
+    <button mat-raised-button color="primary" routerLink="/" class="mt-40"  matTooltip="Go back">
+         <i class="material-icons">arrow_back_ios</i>  Back
+    </button>
+</mat-card>
